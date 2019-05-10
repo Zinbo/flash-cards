@@ -1,3 +1,23 @@
+/* PAGE SETUP */
+.full-container {
+  background-color: #F1F1F1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-container {
+  display: flex;
+  flex: 1;
+}
+
+/* NAVBAR */
+.flash-header{
+  box-shadow: 7px 7px 22px grey;
+}
+
+/* APP PAGE*/
+
 .App {
   text-align: center;
 }
@@ -8,11 +28,17 @@
   pointer-events: none;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app-page {
   display: flex;
   flex-direction: column;
+  flex: 1;
+}
+
+.maxheight {
+  flex: 1;
+}
+
+.App-header {
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
@@ -30,4 +56,91 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* CARD */
+
+.card  {
+  width: 50em;
+  height: 40em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  box-shadow: 2px 3px 23px rgba(0,0,0,.1);
+  padding: 1em 3em;
+	transform-style: preserve-3d;
+  margin-top: 4em;
+  transition: 0.2s;
+  border-radius: 0rem;
+}
+
+.card-holder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.card__flip-card {
+  position: absolute;
+  top: 4%;
+  right: 5%;
+  cursor: pointer;
+  color: #333;
+}
+
+.card__actions {
+  position: absolute;
+  bottom: 10%;
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  transition: 0.3s;
+  left: 0;
+}
+
+.card__buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card__content--front {
+  font-weight: bold;
+}
+
+.card__content--back {
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+div {
+  border: 1px dotted #000000;
+}
+
+
+
+/* LOADING */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.loading-container {
+  display: flex;
+  flex: 1;
+}
+
+.card-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-stage-inner {
+  flex-direction: column;
+  flex: 1;
 }
