@@ -7,8 +7,7 @@ import './App.css';
 
 const App: React.FC = () => {
   return (
-    <section className="app-page">
-    <Row className="maxheight">
+    <Row>
       <Col>
         <div className="App">
           <header className="App-header">
@@ -27,8 +26,7 @@ const App: React.FC = () => {
           </header>
         </div>
       </Col>
-      </Row>
-    </section>
+    </Row>
   );
 }
 

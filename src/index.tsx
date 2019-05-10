@@ -7,12 +7,12 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Overview from './overview';
 import Learn from './learn';
 import CardStage from './learn/cardStage';
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import { Navbar, Nav, Container, Row, Col } from 'react-bootstrap';
 import { LinkContainer } from "react-router-bootstrap";
 
 ReactDOM.render(
     <Router>
-        <div className="full-container">
+        <Container fluid style={{backgroundColor: "#F1F1F1", paddingLeft: "0px", paddingRight: "0px"}}>
             <Navbar className="flash-header" bg="dark" variant="dark">
                 <LinkContainer to="/">
                     <Navbar.Brand>Flash Cards</Navbar.Brand>
@@ -28,14 +28,11 @@ ReactDOM.render(
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
-
-            <Container fluid className="content-container">
-                <Route exact path="/" component={App} />
-                <Route path="/overview" component={Overview} />
-                <Route path="/learn" component={Learn} />
-                <Route path="/cardstage" component={CardStage} />
-            </Container>
-        </div>
+            <Route exact path="/" component={App} />
+            <Route path="/overview" component={Overview} />
+            <Route path="/learn" component={Learn} />
+            <Route path="/cardstage" component={CardStage} />
+        </Container>
     </Router>
     ,
     document.getElementById('root'));

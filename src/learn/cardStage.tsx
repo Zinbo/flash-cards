@@ -1,7 +1,8 @@
 import React from 'react';
 import { ButtonToolbar, Button, Col, Row } from 'react-bootstrap';
 import queryString from 'query-string';
-import Card from './card'
+import Card from './card';
+import Loading from '../common/loading'
 
 interface MyProps {
     location: any
@@ -79,46 +80,15 @@ class CardStage extends React.Component<MyProps, MyState> {
         //TODO Display loading in center of page
         const isFirstCard = this.state.currentCardIndex === 0;
         const isLastCard = this.state.currentCardIndex === this.state.cards.length - 1;
-        if(this.state.loading) return <div className="loading-container"><h1 className="loading">LOADING</h1></div>;
+        if(this.state.loading) return <Loading />
         return (
             <section className="card-stage">
                 <Row>
-                    <Col>
-                        <h1>1-1</h1>
-                    </Col>
-                    <Col>
-                        <h1>1-2</h1>
-                    </Col>
-                    <Col>
-                        <h1>1-3</h1>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <h1>2-1</h1>
-                    </Col>
-                    <Col>
-                        <h1>2-2</h1>
-                    </Col>
-                    <Col>
-                        <h1>2-3</h1>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <h1>3-1</h1>
-                    </Col>
-                    <Col>
-                        <h1>3-2</h1>
-                    </Col>
-                    <Col>
-                        <h1>3-3</h1>
-                    </Col>
-                    <Col>
+                    <Col xs="12">
                         <h1>{this.state.categoryName}</h1>
                     </Col>
                 </Row>
-                {/* {this.state.cards[this.state.currentCardIndex]}
+                {this.state.cards[this.state.currentCardIndex]}
                 <ButtonToolbar>
                     <Button style={{ marginRight: "10px" }} variant="outline-primary" onClick={() => {
                         this.setState({ currentCardIndex: this.state.currentCardIndex - 1 });
@@ -126,7 +96,7 @@ class CardStage extends React.Component<MyProps, MyState> {
                     <Button style={{ marginRight: "10px" }} variant="outline-primary" onClick={() => {
                         this.setState({ currentCardIndex: this.state.currentCardIndex + 1 });
                     }} disabled={isLastCard} >Next</Button>
-                </ButtonToolbar> */}
+                </ButtonToolbar>
             </section>
         )
     }
