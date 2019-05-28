@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { FormControl, InputGroup } from 'react-bootstrap'
 import { Col, ListGroup, Modal, Row } from 'react-bootstrap'
+import { RouteComponentProps } from 'react-router-dom'
 import toastr from 'toastr'
 import 'toastr/build/toastr.css'
 import DeleteModal from '../common/delete-modal'
-import { RouteComponentProps } from 'react-router-dom'
 
 interface Category {
   id: number
@@ -151,7 +151,13 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
                 return (
                   <ListGroup.Item>
                     <Row>
-                      <Col lg="6" className="category-row" onClick={() => { this.props.history.push(`/overview/cards?categoryId=${category.id}`)}}>
+                      <Col
+                        lg="6"
+                        className="category-row"
+                        onClick={() => {
+                          this.props.history.push(`/cards?categoryId=${category.id}`)
+                        }}
+                      >
                         {category.name}
                       </Col>
                       <Col className="ml-auto text-right" lg="1">

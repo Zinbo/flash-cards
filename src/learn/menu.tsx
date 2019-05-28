@@ -9,45 +9,53 @@ interface Card {
 
 interface MyProps {
   menuVisibility: boolean
-  handleMouseDown: (event: React.MouseEvent) => void
+  closeMenu: (e: React.MouseEvent) => void
   cards: Card[]
   currentCardIndex: number
   changeCard: (index: number) => void
 }
 
-class Menu extends Component<MyProps> {
-  public render() {
-    let visibility = 'hide'
+const menu: React.FC<MyProps> = (props: MyProps) => {
+  let visibility = 'hide'
 
-    if (this.props.menuVisibility) {
-      visibility = 'show'
-    }
-
-    return (
-      <div id="flyoutMenu" className={visibility}>
-        <div className="close-menu">
-          <span onMouseDown={this.props.handleMouseDown}>
-            <FontAwesomeIcon icon={faWindowClose} />
-          </span>
-        </div>
-        <h2>Cards</h2>
-        <ol>
-          {this.props.cards.map((card, index) => {
-            return (
-              <li>
-                <span
-                  className={index === this.props.currentCardIndex ? 'active' : ''}
-                  onClick={() => this.props.changeCard(index)}
-                >
-                  {card.front}
-                </span>
-              </li>
-            )
-          })}
-        </ol>
-      </div>
-    )
+  if (props.menuVisibility) {
+    visibility = 'show'
   }
+
+  // This is necessary as I've made it so that if you click anywhere on the card stage it closes the menu, however I don't want this to happen
+  // if you click inside the menu but not on a button. The .closeMenu function calls stopPropagation, so if the user clicks on a button
+  // inside the menu this method will not trigger
+  const handleClickOnMenu = (e: React.MouseEvent) => {
+    e.stopPropagation()
+  }
+
+  return (
+    <div id="flyoutMenu" className={visibility} onMouseDown={handleClickOnMenu}>
+      <div className="close-menu">
+        <span onMouseDown={props.closeMenu}>
+          <FontAwesomeIcon icon={faWindowClose} />
+        </span>
+      </div>
+      <h2>Cards</h2>
+      <ol>
+        {props.cards.map((card, index) => {
+          return (
+            <li>
+              <span
+                className={index === props.currentCardIndex ? 'active' : ''}
+                onMouseDown={(e: React.MouseEvent) => {
+                  props.changeCard(index)
+                  props.closeMenu(e)
+                }}
+              >
+                {card.front}
+              </span>
+            </li>
+          )
+        })}
+      </ol>
+    </div>
+  )
 }
 
-export default Menu
+export default menu

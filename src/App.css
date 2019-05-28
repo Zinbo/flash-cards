@@ -75,6 +75,13 @@
   color: #333;
 }
 
+.card__card-number {
+  position: absolute;
+  top: 4%;
+  left: 5%;
+  color: #333;
+}
+
 .card__actions {
   position: absolute;
   bottom: 5%;

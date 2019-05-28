@@ -5,6 +5,7 @@ import React from 'react'
 import { Button, Card, Col, Row } from 'react-bootstrap'
 import Accordion from 'react-bootstrap/Accordion'
 import { RouteComponentProps } from 'react-router'
+import * as Showdown from 'showdown'
 import toastr from 'toastr'
 import DeleteCardModal from '../common/delete-modal'
 import FlashCard from '../common/flash-card'
@@ -28,6 +29,7 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
     cardToEdit: undefined,
     cardToDelete: undefined,
   }
+  public converter: Showdown.Converter
   constructor(props: RouteComponentProps) {
     super(props)
     this.onAddCard = this.onAddCard.bind(this)
@@ -35,6 +37,12 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
     this.onEditCard = this.onEditCard.bind(this)
     this.onCloseEditCardModal = this.onCloseEditCardModal.bind(this)
     this.onDeleteCard = this.onDeleteCard.bind(this)
+    this.converter = new Showdown.Converter({
+      tables: true,
+      simplifiedAutoLink: true,
+      strikethrough: true,
+      tasklists: true,
+    })
   }
   public componentDidMount() {
     const params = QueryString.parse(this.props.location.search)
@@ -215,7 +223,9 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
                       </Row>
                     </Accordion.Toggle>
                     <Accordion.Collapse eventKey={String(index)}>
-                      <Card.Body>{card.back}</Card.Body>
+                      <Card.Body
+                        dangerouslySetInnerHTML={{ __html: this.converter.makeHtml(card.back) }}
+                      />
                     </Accordion.Collapse>
                   </Card>
                 </Col>

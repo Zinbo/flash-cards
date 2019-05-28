@@ -7,10 +7,13 @@ import * as Showdown from 'showdown'
 interface CardProps {
   front: string
   back: string
-  number: number
+  cardNumber: number
+  totalNumberOfCards: number
+  handleKnowButtonClick: () => void
+  handleWrongButtonClick: () => void
 }
 
-const Categories: React.FC<CardProps> = (props: CardProps) => {
+const card: React.FC<CardProps> = (props: CardProps) => {
   const [facingFront, toggleFacingFront] = useState(true)
   const converter = new Showdown.Converter({
     tables: true,
@@ -43,6 +46,9 @@ const Categories: React.FC<CardProps> = (props: CardProps) => {
                 <FontAwesomeIcon icon={faRedo} />
               </span>
             </div>
+            <div className="card__card-number">{`${props.cardNumber}/${
+              props.totalNumberOfCards
+            }`}</div>
             {facingFront ? (
               <div className="card__content--front">{props.front}</div>
             ) : (
@@ -54,12 +60,18 @@ const Categories: React.FC<CardProps> = (props: CardProps) => {
             {// TODO: Implement buttons
             facingFront ? (
               <div className="card__actions">
-                <Button variant="success">I Already Know It!</Button>
+                <Button variant="success" onClick={props.handleKnowButtonClick}>
+                  I Already Know It!
+                </Button>
               </div>
             ) : (
               <div className="card__actions">
-                <Button variant="success">I knew it!</Button>
-                <Button variant="danger">Got it wrong...</Button>
+                <Button variant="success" onClick={props.handleKnowButtonClick}>
+                  I knew it!
+                </Button>
+                <Button variant="danger" onClick={props.handleWrongButtonClick}>
+                  Got it wrong...
+                </Button>
               </div>
             )}
           </div>
@@ -69,4 +81,4 @@ const Categories: React.FC<CardProps> = (props: CardProps) => {
   )
 }
 
-export default Categories
+export default card

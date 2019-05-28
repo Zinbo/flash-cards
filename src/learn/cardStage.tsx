@@ -2,7 +2,8 @@ import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import queryString from 'query-string'
 import React from 'react'
-import { Button, ButtonToolbar, Col, Row } from 'react-bootstrap'
+import { Button, Col, Row } from 'react-bootstrap'
+import FlashCard from '../common/flash-card'
 import Loading from '../common/loading'
 import Card from './card'
 import Menu from './menu'
@@ -11,18 +12,13 @@ interface MyProps {
   location: any
 }
 
-interface CardData {
-  front: string
-  back: string
-}
-
 interface MyState {
   loading: boolean
   cards: JSX.Element[]
   categoryName: string
   currentCardIndex: number
   visible: boolean
-  cardData: CardData[]
+  cardData: FlashCard[]
 }
 
 class CardStage extends React.Component<MyProps, MyState> {
@@ -37,41 +33,49 @@ class CardStage extends React.Component<MyProps, MyState> {
 
   constructor(props: MyProps) {
     super(props)
-    this.handleMouseDown = this.handleMouseDown.bind(this)
+    this.handleMenuMouseDown = this.handleMenuMouseDown.bind(this)
     this.toggleMenu = this.toggleMenu.bind(this)
     this.changeCard = this.changeCard.bind(this)
+    this.closeMenuIfOpen = this.closeMenuIfOpen.bind(this)
   }
 
-  public toggleMenu() {
+  public toggleMenu(newState?: boolean) {
+    const visible = newState !== undefined ? newState : !this.state.visible
     this.setState({
-      visible: !this.state.visible,
+      visible,
     })
   }
 
-  public handleMouseDown(e: React.MouseEvent) {
+  public handleMenuMouseDown(e: React.MouseEvent) {
     this.toggleMenu()
-
-    console.log('clicked')
     e.stopPropagation()
   }
 
-  public getCardData(categoryId: number): CardData[] {
+  public getCardData(categoryId: number): FlashCard[] {
     // TODO: Need to actually load card data here based on categoryId
     return [
       {
+        id: 1,
         front: 'What is merge sort?',
         back: `# First header 1\nblah blah blah\n## Header 2\ngfdfdfdsfdf`,
       },
       {
+        id: 2,
         front: 'What is bubble sort?',
         back: 'dhfdjdshfsjfhdsfjsd',
       },
     ]
   }
 
-  public getCardsFromData(cardData: CardData[]): JSX.Element[] {
+  public getCardsFromData(cardData: FlashCard[]): JSX.Element[] {
     return cardData.map((cardDatum, index) => (
-      <Card front={cardDatum.front} back={cardDatum.back} number={index} />
+      <Card
+        id={cardDatum.id}
+        front={cardDatum.front}
+        back={cardDatum.back}
+        cardNumber={index + 1}
+        totalNumberOfCards={cardData.length}
+      />
     ))
   }
 
@@ -110,17 +114,21 @@ class CardStage extends React.Component<MyProps, MyState> {
     }, 1000)
   }
 
+  public closeMenuIfOpen() {
+    this.toggleMenu(false)
+  }
+
   public render() {
     // TODO design navbar to select card
     const isFirstCard = this.state.currentCardIndex === 0
-    const isLastCard = this.state.currentCardIndex === this.state.cards.length - 1
+    const isPastLastCard = this.state.currentCardIndex === this.state.cards.length
     if (this.state.loading) {
       return <Loading />
     }
     return (
-      <section className="card-stage">
+      <section className="card-stage" onMouseDown={this.closeMenuIfOpen}>
         <Menu
-          handleMouseDown={this.handleMouseDown}
+          closeMenu={this.handleMenuMouseDown}
           menuVisibility={this.state.visible}
           cards={this.state.cardData}
           currentCardIndex={this.state.currentCardIndex}
@@ -128,7 +136,7 @@ class CardStage extends React.Component<MyProps, MyState> {
         />
         <div
           id="roundButton"
-          onMouseDown={this.handleMouseDown}
+          onMouseDown={this.handleMenuMouseDown}
           style={{ position: 'absolute', zIndex: 999 }}
         >
           <FontAwesomeIcon className="roundButton" icon={faBars} size="lg" />
@@ -138,36 +146,42 @@ class CardStage extends React.Component<MyProps, MyState> {
             <h1>{this.state.categoryName}</h1>
           </Col>
         </Row>
-        <Row style={{ flex: 1 }}>
-          <Col>{this.state.cards[this.state.currentCardIndex]}</Col>
-        </Row>
-        <Row style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
-          {/* <Col style={{ justifyContent: 'space-evenly', alignItems: 'center', display: 'flex' }}> */}
-          <Col xs="6" md="4" style={{ display: 'flex', justifyContent: 'flex-start' }}>
-            <Button
-              style={{ marginRight: '10px' }}
-              variant="primary"
-              onClick={() => {
-                this.setState({ currentCardIndex: this.state.currentCardIndex - 1 })
-              }}
-              disabled={isFirstCard}
-            >
-              Previous
-            </Button>
-          </Col>
-          <Col xs="6" md="4" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button
-              variant="primary"
-              onClick={() => {
-                this.setState({ currentCardIndex: this.state.currentCardIndex + 1 })
-              }}
-              disabled={isLastCard}
-            >
-              Next
-            </Button>
-          </Col>
-          {/* </Col> */}
-        </Row>
+        {isPastLastCard ? (
+          <h1 className="loading" style={{ textAlign: 'center' }}>
+            Finished, well done!
+          </h1>
+        ) : (
+          <div style={{ height: '100%', display: 'flex', 'flex-direction': 'column' }}>
+            <Row style={{ flex: 1 }}>
+              <Col>{this.state.cards[this.state.currentCardIndex]}</Col>
+            </Row>
+            <Row style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
+              <Col xs="6" md="4" style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <Button
+                  style={{ marginRight: '10px' }}
+                  variant="primary"
+                  onClick={() => {
+                    this.setState({ currentCardIndex: this.state.currentCardIndex - 1 })
+                  }}
+                  disabled={isFirstCard}
+                >
+                  Previous
+                </Button>
+              </Col>
+              <Col xs="6" md="4" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    this.setState({ currentCardIndex: this.state.currentCardIndex + 1 })
+                  }}
+                >
+                  Next
+                </Button>
+              </Col>
+              {/* </Col> */}
+            </Row>
+          </div>
+        )}
       </section>
     )
   }
