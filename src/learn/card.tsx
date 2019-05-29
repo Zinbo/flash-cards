@@ -5,16 +5,18 @@ import { Button, Col, Row } from 'react-bootstrap'
 import * as Showdown from 'showdown'
 
 interface CardProps {
+  id: number
   front: string
   back: string
   cardNumber: number
   totalNumberOfCards: number
-  handleKnowButtonClick: () => void
-  handleWrongButtonClick: () => void
+  handleKnowButtonClick: (id: number) => void
+  handleWrongButtonClick: (id: number) => void
+  flipCardToFront: (faceFront: boolean) => void
+  faceFront: boolean
 }
 
-const card: React.FC<CardProps> = (props: CardProps) => {
-  const [facingFront, toggleFacingFront] = useState(true)
+const Card: React.FC<CardProps> = (props: CardProps) => {
   const converter = new Showdown.Converter({
     tables: true,
     simplifiedAutoLink: true,
@@ -42,14 +44,16 @@ const card: React.FC<CardProps> = (props: CardProps) => {
         >
           <div className="flash-card">
             <div className="card__flip-card">
-              <span onClick={() => toggleFacingFront(!facingFront)}>
+              <span onClick={() => {
+                console.log("clicked redo")
+                props.flipCardToFront(!props.faceFront)}}>
                 <FontAwesomeIcon icon={faRedo} />
               </span>
             </div>
             <div className="card__card-number">{`${props.cardNumber}/${
               props.totalNumberOfCards
             }`}</div>
-            {facingFront ? (
+            {props.faceFront ? (
               <div className="card__content--front">{props.front}</div>
             ) : (
               <div
@@ -58,18 +62,30 @@ const card: React.FC<CardProps> = (props: CardProps) => {
               />
             )}
             {// TODO: Implement buttons
-            facingFront ? (
+            props.faceFront ? (
               <div className="card__actions">
-                <Button variant="success" onClick={props.handleKnowButtonClick}>
+                <Button variant="success" onClick={() => {
+                  props.handleKnowButtonClick(props.id)
+                  props.flipCardToFront(true)
+                }}>
+                {/* <Button variant="success"> */}
                   I Already Know It!
                 </Button>
               </div>
             ) : (
               <div className="card__actions">
-                <Button variant="success" onClick={props.handleKnowButtonClick}>
+                {/* <Button variant="success"> */}
+                <Button variant="success" onClick={() => {
+                  props.handleKnowButtonClick(props.id)
+                  props.flipCardToFront(true)
+                  }}>
                   I knew it!
                 </Button>
-                <Button variant="danger" onClick={props.handleWrongButtonClick}>
+                {/* <Button variant="success"> */}
+                <Button variant="danger" onClick={() => {
+                  props.handleWrongButtonClick(props.id)
+                  props.flipCardToFront(true)
+                }}>
                   Got it wrong...
                 </Button>
               </div>
@@ -81,4 +97,4 @@ const card: React.FC<CardProps> = (props: CardProps) => {
   )
 }
 
-export default card
+export default Card

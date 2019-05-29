@@ -65,9 +65,11 @@ export default class CardModal extends React.Component<CardModalProps, CardModal
         id: this.props.existingCard.id,
         front: this.state.cardTitle,
         back: this.state.cardBack,
+        noRight: this.props.existingCard.noRight,
+        noWrong: this.props.existingCard.noWrong
       })
     } else {
-      await this.props.onSave({ id: -1, front: this.state.cardTitle, back: this.state.cardBack })
+      await this.props.onSave({ id: -1, front: this.state.cardTitle, back: this.state.cardBack, noRight: 0, noWrong: 0 })
     }
     this.resetModal()
   }
