@@ -1,8 +1,9 @@
 import { faRedo } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useState } from 'react'
+import React from 'react'
 import { Button, Col, Row } from 'react-bootstrap'
 import * as Showdown from 'showdown'
+import './learn.css'
 
 interface CardProps {
   id: number

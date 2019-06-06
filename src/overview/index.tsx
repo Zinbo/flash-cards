@@ -8,6 +8,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import toastr from 'toastr'
 import 'toastr/build/toastr.css'
 import DeleteModal from '../common/delete-modal'
+import './overview.css'
 
 interface Category {
   id: number

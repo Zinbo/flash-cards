@@ -8,6 +8,7 @@ import Loading from '../common/loading'
 import Card from './card'
 import Menu from './menu'
 import toastr from 'toastr'
+import './learn.css'
 
 interface MyProps {
   location: any

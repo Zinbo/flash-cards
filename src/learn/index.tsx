@@ -2,7 +2,7 @@ import React from 'react'
 import { ButtonToolbar, Col, Row } from 'react-bootstrap'
 import { RouteComponentProps } from 'react-router-dom'
 import Loading from '../common/loading'
-import Menu from './menu'
+import './learn.css'
 
 interface Category {
   id: number

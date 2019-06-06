@@ -2,6 +2,7 @@ import { faWindowClose } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { Component } from 'react'
 import { ListGroup } from 'react-bootstrap'
+import './learn.css'
 
 interface Card {
   front: string

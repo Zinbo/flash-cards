@@ -10,6 +10,7 @@ import toastr from 'toastr'
 import DeleteCardModal from '../common/delete-modal'
 import FlashCard from '../common/flash-card'
 import CardModal from './new-card-modal'
+import './overview.css'
 
 interface CardOverviewState {
   cards: FlashCard[]
