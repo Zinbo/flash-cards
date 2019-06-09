@@ -1,8 +1,0 @@
-{
-    "compilerOptions": {
-      "baseUrl": "./src",
-      "paths": {
-        "react-bootstrap/Accordion": ["@types/react-bootstrap/accordion/index.d.ts"]
-      }
-    }
-}
