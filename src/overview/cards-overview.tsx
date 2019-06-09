@@ -1,4 +1,4 @@
-import { faPencilAlt, faSdCard, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import QueryString from 'query-string'
 import React from 'react'
@@ -10,6 +10,7 @@ import toastr from 'toastr'
 import DeleteCardModal from '../common/delete-modal'
 import FlashCard from '../common/flash-card'
 import CardModal from './new-card-modal'
+import './overview.css'
 
 interface CardOverviewState {
   cards: FlashCard[]
@@ -65,16 +66,22 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
         id: 1,
         front: 'what is merge sort?',
         back: 'merge sort is blah blah',
+        noRight: 5,
+        noWrong: 0,
       },
       {
         id: 2,
         front: 'What is quick sort?',
         back: 'Quick sort is blah blah blah',
+        noRight: 0,
+        noWrong: 2,
       },
       {
         id: 3,
         front: 'What is hash sort?',
         back: 'Hash sort is blah blah blah blah',
+        noRight: 10,
+        noWrong: 60,
       },
     ]
   }
@@ -176,7 +183,10 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
           {this.state.cardToDelete ? `Delete "${this.state.cardToDelete.front}" card?` : ''}
         </DeleteCardModal>
         <Row className="justify-content-md-center first-row">
-          <Col lg="8" style={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}>
+          <Col
+            lg="10"
+            style={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}
+          >
             <Button
               variant="primary"
               onClick={() => {
@@ -195,11 +205,12 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
                   index === 0 ? 'justify-content-md-center first-row' : 'justify-content-md-center'
                 }
               >
-                <Col lg="8">
+                <Col lg="10">
                   <Card>
                     <Accordion.Toggle as={Card.Header} variant="link" eventKey={String(index)}>
                       <Row>
-                        <Col xs="11">{card.front}</Col>
+                        <Col xs="7">{card.front}</Col>
+                        <Col xs="4">{`R:${card.noRight} W:${card.noWrong}`}</Col>
                         <Col className="ml-auto text-right" lg="1">
                           <span
                             onClick={() =>

@@ -2,7 +2,7 @@ import React from 'react'
 import { ButtonToolbar, Col, Row } from 'react-bootstrap'
 import { RouteComponentProps } from 'react-router-dom'
 import Loading from '../common/loading'
-import Menu from './menu'
+import './learn.css'
 
 interface Category {
   id: number
@@ -21,10 +21,6 @@ class ShowCategories extends React.Component<RouteComponentProps, LearnState> {
   public state: LearnState = {
     loading: true,
     categories: [],
-  }
-
-  constructor(props: RouteComponentProps) {
-    super(props)
   }
 
   public getRandomButtonColour() {
@@ -69,7 +65,6 @@ class ShowCategories extends React.Component<RouteComponentProps, LearnState> {
     if (this.state.loading) {
       return <Loading />
     }
-    const bc = buttonColours[0]
 
     return (
       <div>

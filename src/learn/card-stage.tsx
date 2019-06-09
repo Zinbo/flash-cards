@@ -7,6 +7,8 @@ import FlashCard from '../common/flash-card'
 import Loading from '../common/loading'
 import Card from './card'
 import Menu from './menu'
+import toastr from 'toastr'
+import './learn.css'
 
 interface MyProps {
   location: any
@@ -19,6 +21,7 @@ interface MyState {
   currentCardIndex: number
   visible: boolean
   cardData: FlashCard[]
+  cardFacingFront: boolean
 }
 
 class CardStage extends React.Component<MyProps, MyState> {
@@ -29,6 +32,7 @@ class CardStage extends React.Component<MyProps, MyState> {
     currentCardIndex: 0,
     visible: false,
     cardData: [],
+    cardFacingFront: true
   }
 
   constructor(props: MyProps) {
@@ -37,6 +41,9 @@ class CardStage extends React.Component<MyProps, MyState> {
     this.toggleMenu = this.toggleMenu.bind(this)
     this.changeCard = this.changeCard.bind(this)
     this.closeMenuIfOpen = this.closeMenuIfOpen.bind(this)
+    this.handleIDontKnowButton = this.handleIDontKnowButton.bind(this)
+    this.handleIKnowButton = this.handleIKnowButton.bind(this)
+    this.flipCardToFront = this.flipCardToFront.bind(this)
   }
 
   public toggleMenu(newState?: boolean) {
@@ -58,13 +65,23 @@ class CardStage extends React.Component<MyProps, MyState> {
         id: 1,
         front: 'What is merge sort?',
         back: `# First header 1\nblah blah blah\n## Header 2\ngfdfdfdsfdf`,
+        noRight: 1,
+        noWrong: 1
       },
       {
         id: 2,
         front: 'What is bubble sort?',
         back: 'dhfdjdshfsjfhdsfjsd',
+        noRight: 1,
+        noWrong: 1
       },
     ]
+  }
+
+  public flipCardToFront(faceFront: boolean) {
+    this.setState({
+      cardFacingFront: faceFront
+    })
   }
 
   public getCardsFromData(cardData: FlashCard[]): JSX.Element[] {
@@ -75,8 +92,24 @@ class CardStage extends React.Component<MyProps, MyState> {
         back={cardDatum.back}
         cardNumber={index + 1}
         totalNumberOfCards={cardData.length}
+        handleKnowButtonClick={id => this.handleIKnowButton(id)}
+        handleWrongButtonClick={id => this.handleIDontKnowButton(id)}
+        faceFront={this.state.cardFacingFront}
+        flipCardToFront={this.flipCardToFront}
       />
     ))
+  }
+
+  public handleIKnowButton(id: number) {
+    //TODO do a save with score by card id
+    toastr.success("Good job!")
+    this.changeCard(this.state.currentCardIndex + 1)
+  }
+
+  public handleIDontKnowButton(id: number) {
+    //TODO do a save with score by card id 
+    toastr.warning("Better luck next time!")
+    this.changeCard(this.state.currentCardIndex + 1)
   }
 
   public getCategoryName(categoryId: number) {
@@ -153,7 +186,20 @@ class CardStage extends React.Component<MyProps, MyState> {
         ) : (
           <div style={{ height: '100%', display: 'flex', 'flex-direction': 'column' }}>
             <Row style={{ flex: 1 }}>
-              <Col>{this.state.cards[this.state.currentCardIndex]}</Col>
+              {/* <Col>{this.state.cards[this.state.currentCardIndex]}</Col> */}
+              <Col>
+              <Card
+                  id={this.state.cardData[this.state.currentCardIndex].id}
+                  front={this.state.cardData[this.state.currentCardIndex].front}
+                  back={this.state.cardData[this.state.currentCardIndex].back}
+                  cardNumber={this.state.currentCardIndex+1}
+                  totalNumberOfCards={this.state.cardData.length}
+                  handleKnowButtonClick={id => this.handleIKnowButton(id)}
+                  handleWrongButtonClick={id => this.handleIDontKnowButton(id)}
+                  faceFront={this.state.cardFacingFront}
+                  flipCardToFront={this.flipCardToFront}
+                />
+              </Col>
             </Row>
             <Row style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
               <Col xs="6" md="4" style={{ display: 'flex', justifyContent: 'flex-start' }}>
@@ -162,6 +208,7 @@ class CardStage extends React.Component<MyProps, MyState> {
                   variant="primary"
                   onClick={() => {
                     this.setState({ currentCardIndex: this.state.currentCardIndex - 1 })
+                    this.flipCardToFront(true)
                   }}
                   disabled={isFirstCard}
                 >
@@ -173,6 +220,7 @@ class CardStage extends React.Component<MyProps, MyState> {
                   variant="primary"
                   onClick={() => {
                     this.setState({ currentCardIndex: this.state.currentCardIndex + 1 })
+                    this.flipCardToFront(true)
                   }}
                 >
                   Next

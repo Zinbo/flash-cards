@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Col, FormControl, InputGroup, Modal, Row } from 'react-bootstrap'
+import { Button, FormControl, InputGroup, Modal } from 'react-bootstrap'
 import ReactMde from 'react-mde'
 import 'react-mde/lib/styles/css/react-mde-all.css'
 import * as Showdown from 'showdown'
@@ -65,9 +65,17 @@ export default class CardModal extends React.Component<CardModalProps, CardModal
         id: this.props.existingCard.id,
         front: this.state.cardTitle,
         back: this.state.cardBack,
+        noRight: this.props.existingCard.noRight,
+        noWrong: this.props.existingCard.noWrong,
       })
     } else {
-      await this.props.onSave({ id: -1, front: this.state.cardTitle, back: this.state.cardBack })
+      await this.props.onSave({
+        id: -1,
+        front: this.state.cardTitle,
+        back: this.state.cardBack,
+        noRight: 0,
+        noWrong: 0,
+      })
     }
     this.resetModal()
   }

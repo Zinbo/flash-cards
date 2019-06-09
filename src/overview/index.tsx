@@ -3,11 +3,12 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { FormControl, InputGroup } from 'react-bootstrap'
-import { Col, ListGroup, Modal, Row } from 'react-bootstrap'
+import { Col, ListGroup, Row } from 'react-bootstrap'
 import { RouteComponentProps } from 'react-router-dom'
 import toastr from 'toastr'
 import 'toastr/build/toastr.css'
 import DeleteModal from '../common/delete-modal'
+import './overview.css'
 
 interface Category {
   id: number
