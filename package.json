@@ -5,7 +5,7 @@
     "client-dev": "cd client && yarn start",
     "server-dev": "cd server && yarn start-dev",
     "dev": "concurrently --kill-others-on-fail \"yarn server-dev\" \"yarn client-dev\"",
-    "build": "cd client && yarn build && cd ../server && yarn install",
+    "build": "cd client && yarn install && yarn build && cd ../server && yarn install",
     "start": "cd server && yarn start-prod"
   },
   "dependencies": {
