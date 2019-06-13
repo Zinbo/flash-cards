@@ -4,3 +4,5 @@ const sayHello = () => {
 }
 
 export default sayHello
+
+// Will contain a controller class which will call the category service
