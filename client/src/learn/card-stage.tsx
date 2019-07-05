@@ -58,24 +58,9 @@ class CardStage extends React.Component<MyProps, MyState> {
     e.stopPropagation()
   }
 
-  public getCardData(categoryId: number): FlashCard[] {
-    // TODO: Need to actually load card data here based on categoryId
-    return [
-      {
-        id: 1,
-        front: 'What is merge sort?',
-        back: `# First header 1\nblah blah blah\n## Header 2\ngfdfdfdsfdf`,
-        noRight: 1,
-        noWrong: 1,
-      },
-      {
-        id: 2,
-        front: 'What is bubble sort?',
-        back: 'dhfdjdshfsjfhdsfjsd',
-        noRight: 1,
-        noWrong: 1,
-      },
-    ]
+  public async getCardData(categoryId: number): Promise<FlashCard[]> {
+    const response = await fetch(`/api/categories/${categoryId}/cards`);
+    return await response.json(); 
   }
 
   public flipCardToFront(faceFront: boolean) {
@@ -100,21 +85,23 @@ class CardStage extends React.Component<MyProps, MyState> {
     ))
   }
 
-  public handleIKnowButton(id: number) {
-    // TODO do a save with score by card id
+  public handleIKnowButton(id: number) : void {
+    fetch(`/api/cards/${id}/rightAnswer`, {method: 'POST'});
     toastr.success('Good job!')
     this.changeCard(this.state.currentCardIndex + 1)
   }
 
   public handleIDontKnowButton(id: number) {
-    // TODO do a save with score by card id
+    fetch(`/api/cards/${id}/wrongAnswer`, {method: 'POST'});
     toastr.warning('Better luck next time!')
     this.changeCard(this.state.currentCardIndex + 1)
   }
 
-  public getCategoryName(categoryId: number) {
-    // TODO: Get category name
-    return 'Algorithms'
+  public async getCategoryName(categoryId: number) : Promise<string> {
+    const response = await fetch(`/api/categories/${categoryId}`)
+    const category = await response.json();
+    const name = category.name;
+    return name;
   }
 
   public changeCard(index: number) {
@@ -123,7 +110,7 @@ class CardStage extends React.Component<MyProps, MyState> {
     })
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     const params = queryString.parse(this.props.location.search)
     let categoryId: number = NaN
     if (typeof params.categoryId === 'string') {
@@ -132,19 +119,18 @@ class CardStage extends React.Component<MyProps, MyState> {
     if (isNaN(categoryId)) {
       return
     } // TODO: Need to handle this
-    const categoryName = this.getCategoryName(categoryId)
-    const cardData = this.getCardData(categoryId)
+    const categoryNamePromise = this.getCategoryName(categoryId)
+    const cardDataPromise = this.getCardData(categoryId)
+    const categoryName = await categoryNamePromise;
+    const cardData = await cardDataPromise;
     const cards = this.getCardsFromData(cardData)
-
-    window.setTimeout(() => {
-      this.setState({
-        loading: false,
-        cards,
-        currentCardIndex: 0,
-        categoryName,
-        cardData,
-      })
-    }, 1000)
+    this.setState({
+      loading: false,
+      cards,
+      currentCardIndex: 0,
+      categoryName,
+      cardData,
+    })
   }
 
   public closeMenuIfOpen() {

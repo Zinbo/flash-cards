@@ -4,14 +4,17 @@
   "scripts": {
     "client-dev": "cd client && yarn start",
     "server-dev": "cd server && yarn start-dev",
+    "server-debug": "cd server && yarn start-debug",
     "dev": "concurrently --kill-others-on-fail \"yarn server-dev\" \"yarn client-dev\"",
-    "build": "cd client && yarn install && yarn build && cd ../server && yarn install",
-    "start": "cd server && yarn start-prod"
+    "debug": "concurrently --kill-others-on-fail \"yarn server-debug\" \"yarn client-dev\"",
+    "build": "yarn install-all-dependencies && cd client && yarn build && cd ../server && yarn build",
+    "start": "cd server && yarn start-prod",
+    "install-all-dependencies": "yarn install && cd client && yarn install && cd ../server && yarn install"
   },
   "dependencies": {
+    "@types/bson": "^4.0.0"
   },
   "devDependencies": {
     "concurrently": "^4.0.1"
   }
-  
 }

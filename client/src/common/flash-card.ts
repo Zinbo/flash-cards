@@ -1,5 +1,5 @@
 export default interface FlashCard {
-  id: number
+  _id: number
   front: string
   back: string
   noRight: Number

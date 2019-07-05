@@ -39,30 +39,22 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
     this.addCategory = this.addCategory.bind(this)
   }
 
-  public componentDidMount() {
-    const categories = this.getCategories()
-    this.getTestFromAPI()      
-      .then(res => this.setState({ response: res.express }))      
-      .catch(err => console.log(err));
+  public async componentDidMount() {
+    const categories = await this.getCategories() 
     this.setState({
       categories,
     })
   }
 
-  public async getTestFromAPI() {
-    const response = await fetch('/api/hello');    
-    const body = await response.json();
-    if (response.status !== 200) throw Error(body.message);
-    return body;
-  }
-
   public deleteFromModal() {
-    // TODO: delete category
     if (this.state.categoryToDelete === undefined) {
       return
     }
     const categoryToDelete = this.state.categoryToDelete
     const id = categoryToDelete.id
+    fetch(`/api/categories/${id}`, {
+      method: 'DELETE',
+    })
     const indexOfElementToDelete: number = this.state.categories.findIndex(category => {
       return category.id === id
     })
@@ -83,24 +75,12 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
     })
   }
 
-  public getCategories() {
-    // TODO: Load Categories
-    const categories = [
-      {
-        id: 1,
-        name: 'Data Structures',
-      },
-      {
-        id: 2,
-        name: 'Algorithms',
-      },
-      {
-        id: 3,
-        name: 'C++',
-      },
-    ]
-
-    return categories
+  public async getCategories() {
+    const response = await fetch('/api/categories');
+    const body = await response.json();
+    // TODO: how to handle this error?
+    if(response.status !== 200) throw Error(body.message);
+    return body;
   }
 
   public closeModal() {
@@ -109,15 +89,22 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
     })
   }
 
-  public addCategory = (event: React.KeyboardEvent) => {
+  public addCategory = async (event: React.KeyboardEvent) => {
     if (event.key !== 'Enter' || !this.state.newCategoryName) {
       return
     }
-    // TODO save category with category name and get id!
-    // TODO get categories again?
     const categories = [...this.state.categories]
-    const id = Math.floor(Math.random() * 1000)
-    categories.push({ id, name: this.state.newCategoryName })
+    const response = await fetch('/api/categories', {
+      method: 'POST',
+      body: JSON.stringify({name: this.state.newCategoryName}),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    })
+    const newCategory: Category = await response.json();
+    console.log("")
+    categories.push(newCategory)
     this.setState({
       newCategoryName: '',
       categories,

@@ -10,7 +10,6 @@ import Overview from './overview'
 import CardsByCategory from './overview/cards-overview'
 import * as serviceWorker from './serviceWorker'
 ReactDOM.render(
-  // TODO: Slide out menu: https://www.kirupa.com/react/smooth_sliding_menu_react_motion.htm
   <Router>
     <Container
       fluid={true}

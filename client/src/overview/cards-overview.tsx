@@ -45,45 +45,22 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
       tasklists: true,
     })
   }
-  public componentDidMount() {
+  public async componentDidMount(): Promise<void> {
     const params = QueryString.parse(this.props.location.search)
     if (typeof params.categoryId !== 'string') {
       return
     } // TODO error handling here?
     const categoryId = Number(params.categoryId)
 
-    const cards = this.getCards(categoryId)
+    const cards = await this.getCards(categoryId)
     this.setState({
       cards,
     })
   }
 
-  public getCards(categoryId: number): FlashCard[] {
-    // TODO: Get cards based on categoryId
-
-    return [
-      {
-        id: 1,
-        front: 'what is merge sort?',
-        back: 'merge sort is blah blah',
-        noRight: 5,
-        noWrong: 0,
-      },
-      {
-        id: 2,
-        front: 'What is quick sort?',
-        back: 'Quick sort is blah blah blah',
-        noRight: 0,
-        noWrong: 2,
-      },
-      {
-        id: 3,
-        front: 'What is hash sort?',
-        back: 'Hash sort is blah blah blah blah',
-        noRight: 10,
-        noWrong: 60,
-      },
-    ]
+  public async getCards(categoryId: number): Promise<FlashCard[]> {
+    const response = await fetch(`/api/categories/${categoryId}/cards`);
+    return await response.json(); 
   }
   public onCloseNewCardModal() {
     this.setState({
@@ -91,10 +68,20 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
     })
   }
 
-  public async onAddCard(card: FlashCard) {
+  public async onAddCard(card: FlashCard) : Promise<void> {
+    //TODO: provide category id
+    const categoryId = 0;
+    const response = await fetch(`/api/categories/{${categoryId}}/cards`, {
+      method: 'POST',
+      body: JSON.stringify(card),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    })
+    const newCard = await response.json();
     const newCards = [...this.state.cards]
-    newCards.push(card)
-    // TODO: Save card
+    newCards.push(newCard)
     this.setState(
       {
         cards: newCards,
@@ -105,7 +92,14 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
   }
 
   public async onEditCard(cardToEdit: FlashCard) {
-    // TODO call to edit card
+    fetch(`/api/cards/${cardToEdit.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(cardToEdit),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    })
     const cards = [...this.state.cards]
     const foundCard = cards.find(card => card.id === cardToEdit.id)
     // TODO some error handling here
@@ -131,12 +125,14 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
   }
 
   public onDeleteCard() {
-    // TODO actually delete card
     // TODO some error handling?
     if (!this.state.cardToDelete) {
       return
     }
     const id = this.state.cardToDelete.id
+    fetch(`/api/cards/${id}`, {
+      method: 'DELETE',
+    })
     const cards = this.state.cards
     const index = cards.findIndex(card => card.id === id)
     // TODO error handling?

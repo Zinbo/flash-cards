@@ -27,37 +27,16 @@ class ShowCategories extends React.Component<RouteComponentProps, LearnState> {
     return buttonColours[Math.floor(Math.random() * buttonColours.length)]
   }
 
-  public componentDidMount() {
-    // TODO: Load categories
-    const categories: Category[] = [
-      {
-        id: 1,
-        name: 'Data Structures',
-        colour: this.getRandomButtonColour(),
-      },
-      {
-        id: 2,
-        name: 'Algorithms',
-        colour: this.getRandomButtonColour(),
-      },
-      {
-        id: 3,
-        name: 'Java',
-        colour: this.getRandomButtonColour(),
-      },
-      {
-        id: 4,
-        name: 'C++',
-        colour: this.getRandomButtonColour(),
-      },
-    ]
-
-    window.setTimeout(() => {
-      this.setState({
+  public async componentDidMount() : Promise<void> {
+    const response = await fetch('/api/categories');
+    const categories : Category[] = await response.json();
+    categories.forEach((category: Category) => {
+      category.colour = this.getRandomButtonColour() 
+    });
+    this.setState({
         loading: false,
         categories,
       })
-    }, 2000)
   }
 
   public render() {
