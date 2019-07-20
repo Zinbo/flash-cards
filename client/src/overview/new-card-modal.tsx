@@ -62,7 +62,7 @@ export default class CardModal extends React.Component<CardModalProps, CardModal
     // TODO there must be a better way to do this then use -1? Optional id?
     if (this.props.existingCard) {
       await this.props.onSave({
-        id: this.props.existingCard.id,
+        _id: this.props.existingCard._id,
         front: this.state.cardTitle,
         back: this.state.cardBack,
         noRight: this.props.existingCard.noRight,
@@ -70,7 +70,7 @@ export default class CardModal extends React.Component<CardModalProps, CardModal
       })
     } else {
       await this.props.onSave({
-        id: -1,
+        _id: -1,
         front: this.state.cardTitle,
         back: this.state.cardBack,
         noRight: 0,

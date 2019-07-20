@@ -13,6 +13,7 @@ import CardModal from './new-card-modal'
 import './overview.css'
 
 interface CardOverviewState {
+  categoryId: Number
   cards: FlashCard[]
   showNewCardModal: boolean
   showEditCardModal: boolean
@@ -23,6 +24,7 @@ interface CardOverviewState {
 
 class cardOverview extends React.Component<RouteComponentProps, CardOverviewState> {
   public state: CardOverviewState = {
+    categoryId: 0,
     cards: [],
     showNewCardModal: false,
     showEditCardModal: false,
@@ -51,16 +53,16 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
       return
     } // TODO error handling here?
     const categoryId = Number(params.categoryId)
-
     const cards = await this.getCards(categoryId)
     this.setState({
+      categoryId,
       cards,
     })
   }
 
   public async getCards(categoryId: number): Promise<FlashCard[]> {
-    const response = await fetch(`/api/categories/${categoryId}/cards`);
-    return await response.json(); 
+    const response = await fetch(`/api/categories/${categoryId}/cards`)
+    return await response.json()
   }
   public onCloseNewCardModal() {
     this.setState({
@@ -68,18 +70,16 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
     })
   }
 
-  public async onAddCard(card: FlashCard) : Promise<void> {
-    //TODO: provide category id
-    const categoryId = 0;
-    const response = await fetch(`/api/categories/{${categoryId}}/cards`, {
+  public async onAddCard(card: FlashCard): Promise<void> {
+    const response = await fetch(`/api/categories/${this.state.categoryId}/cards`, {
       method: 'POST',
       body: JSON.stringify(card),
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
     })
-    const newCard = await response.json();
+    const newCard = await response.json()
     const newCards = [...this.state.cards]
     newCards.push(newCard)
     this.setState(
@@ -92,16 +92,16 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
   }
 
   public async onEditCard(cardToEdit: FlashCard) {
-    fetch(`/api/cards/${cardToEdit.id}`, {
+    fetch(`/api/categories/${this.state.categoryId}/cards/${cardToEdit._id}`, {
       method: 'PUT',
       body: JSON.stringify(cardToEdit),
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
     })
     const cards = [...this.state.cards]
-    const foundCard = cards.find(card => card.id === cardToEdit.id)
+    const foundCard = cards.find(card => card._id === cardToEdit._id)
     // TODO some error handling here
     if (typeof foundCard === 'undefined') {
       return
@@ -129,12 +129,12 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
     if (!this.state.cardToDelete) {
       return
     }
-    const id = this.state.cardToDelete.id
-    fetch(`/api/cards/${id}`, {
+    const id = this.state.cardToDelete._id
+    fetch(` /${id}`, {
       method: 'DELETE',
     })
     const cards = this.state.cards
-    const index = cards.findIndex(card => card.id === id)
+    const index = cards.findIndex(card => card._id === id)
     // TODO error handling?
     if (index === -1) {
       return
@@ -165,7 +165,7 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
           onSave={this.onAddCard}
         />
         <CardModal
-          key={this.state.cardToEdit ? this.state.cardToEdit.id : -1}
+          key={this.state.cardToEdit ? this.state.cardToEdit._id : -1}
           show={this.state.showEditCardModal}
           onClose={this.onCloseEditCardModal}
           onSave={this.onEditCard}
