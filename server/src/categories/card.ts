@@ -3,12 +3,10 @@ import { ObjectID } from 'bson';
 
 class Card extends Typegoose {
 
-    public static create(front: string, back: string, noRight: number, noWrong: number): Card {
+    public static create(front: string, back: string): Card {
       const self = new Card();
       self.front = front;
       self.back = back;
-      self.noRight = noRight;
-      self.noWrong = noWrong;
       self._id = new ObjectID();
       return self;
     }
@@ -19,9 +17,9 @@ class Card extends Typegoose {
     @prop()
     back: string = "";
     @prop()
-    noRight: Number = 0;
+    noRight: number = 0;
     @prop() 
-    noWrong: Number = 0;
+    noWrong: number = 0;
   }
 
 export default Card;

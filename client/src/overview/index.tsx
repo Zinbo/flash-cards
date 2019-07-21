@@ -2,7 +2,7 @@ import { faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
-import { FormControl, InputGroup } from 'react-bootstrap'
+import { FormControl, InputGroup, Button, Spinner, ButtonToolbar } from 'react-bootstrap'
 import { Col, ListGroup, Row } from 'react-bootstrap'
 import { RouteComponentProps } from 'react-router-dom'
 import toastr from 'toastr'
@@ -11,7 +11,7 @@ import DeleteModal from '../common/delete-modal'
 import './overview.css'
 
 interface Category {
-  id: number
+  _id: number
   name: string
 }
 
@@ -21,6 +21,7 @@ interface MyState {
   categoryToDelete?: Category
   newCategoryName: string
   response: any
+  addingCategory: boolean
 }
 
 class Categories extends React.Component<RouteComponentProps, MyState> {
@@ -29,7 +30,8 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
     showModal: false,
     categoryToDelete: undefined,
     newCategoryName: '',
-    response: ''
+    response: '',
+    addingCategory: false
   }
 
   constructor(props: RouteComponentProps) {
@@ -51,12 +53,12 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
       return
     }
     const categoryToDelete = this.state.categoryToDelete
-    const id = categoryToDelete.id
+    const id = categoryToDelete._id
     fetch(`/api/categories/${id}`, {
       method: 'DELETE',
     })
     const indexOfElementToDelete: number = this.state.categories.findIndex(category => {
-      return category.id === id
+      return category._id === id
     })
     const categories = [...this.state.categories]
     categories.splice(indexOfElementToDelete, 1)
@@ -89,11 +91,14 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
     })
   }
 
-  public addCategory = async (event: React.KeyboardEvent) => {
-    if (event.key !== 'Enter' || !this.state.newCategoryName) {
+  public addCategory = async () => {
+    if (!this.state.newCategoryName) {
       return
     }
     const categories = [...this.state.categories]
+    this.setState({
+      addingCategory: true
+    })
     const response = await fetch('/api/categories', {
       method: 'POST',
       body: JSON.stringify({name: this.state.newCategoryName}),
@@ -103,11 +108,11 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
       },
     })
     const newCategory: Category = await response.json();
-    console.log("")
     categories.push(newCategory)
     this.setState({
       newCategoryName: '',
       categories,
+      addingCategory: false
     })
   }
 
@@ -130,16 +135,31 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
             `Are you sure you want to delete ${this.state.categoryToDelete.name}?`}
         </DeleteModal>
         <Row className="justify-content-md-center" style={{ paddingTop: '20px' }}>
-          <Col xs={true} lg="10">
+          <Col xs={true} lg="9">
             <InputGroup>
               <FormControl
                 placeholder="Add Category..."
                 aria-label="Category"
                 value={this.state.newCategoryName}
-                onKeyPress={this.addCategory}
                 onChange={this.updateCategoryName}
+                disabled={this.state.addingCategory}
               />
             </InputGroup>
+          </Col>
+          <Col lg="1">
+            {this.state.addingCategory ? 
+              (<Button variant="primary" disabled>
+              <Spinner
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+              />
+              <span className="sr-only">Loading...</span>
+            </Button>) :
+            <Button variant="primary" onClick={this.addCategory}>Submit</Button>
+            }
           </Col>
         </Row>
         <Row
@@ -156,7 +176,7 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
                         lg="6"
                         className="category-row"
                         onClick={() => {
-                          this.props.history.push(`/cards?categoryId=${category.id}`)
+                          this.props.history.push(`/cards?categoryId=${category._id}`)
                         }}
                       >
                         {category.name}

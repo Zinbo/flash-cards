@@ -14,6 +14,7 @@ import './overview.css'
 
 interface CardOverviewState {
   cards: FlashCard[]
+  categoryId: Number
   showNewCardModal: boolean
   showEditCardModal: boolean
   showDeleteCardModal: boolean
@@ -24,6 +25,7 @@ interface CardOverviewState {
 class cardOverview extends React.Component<RouteComponentProps, CardOverviewState> {
   public state: CardOverviewState = {
     cards: [],
+    categoryId: -1,
     showNewCardModal: false,
     showEditCardModal: false,
     showDeleteCardModal: false,
@@ -54,6 +56,7 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
 
     const cards = await this.getCards(categoryId)
     this.setState({
+      categoryId,
       cards,
     })
   }
@@ -69,9 +72,7 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
   }
 
   public async onAddCard(card: FlashCard) : Promise<void> {
-    //TODO: provide category id
-    const categoryId = 0;
-    const response = await fetch(`/api/categories/{${categoryId}}/cards`, {
+    const response = await fetch(`/api/categories/{${this.state.categoryId}}/cards`, {
       method: 'POST',
       body: JSON.stringify(card),
       headers: {
@@ -92,7 +93,7 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
   }
 
   public async onEditCard(cardToEdit: FlashCard) {
-    fetch(`/api/cards/${cardToEdit.id}`, {
+    fetch(`/api/categories/{${this.state.categoryId}}/cards/${cardToEdit._id}`, {
       method: 'PUT',
       body: JSON.stringify(cardToEdit),
       headers: {
@@ -101,7 +102,7 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
       },
     })
     const cards = [...this.state.cards]
-    const foundCard = cards.find(card => card.id === cardToEdit.id)
+    const foundCard = cards.find(card => card._id === cardToEdit._id)
     // TODO some error handling here
     if (typeof foundCard === 'undefined') {
       return
@@ -129,12 +130,12 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
     if (!this.state.cardToDelete) {
       return
     }
-    const id = this.state.cardToDelete.id
-    fetch(`/api/cards/${id}`, {
+    const id = this.state.cardToDelete._id
+    fetch(`/api/categories/${this.state.categoryId}/cards/${id}`, {
       method: 'DELETE',
     })
     const cards = this.state.cards
-    const index = cards.findIndex(card => card.id === id)
+    const index = cards.findIndex(card => card._id === id)
     // TODO error handling?
     if (index === -1) {
       return
@@ -165,7 +166,7 @@ class cardOverview extends React.Component<RouteComponentProps, CardOverviewStat
           onSave={this.onAddCard}
         />
         <CardModal
-          key={this.state.cardToEdit ? this.state.cardToEdit.id : -1}
+          key={this.state.cardToEdit ? this.state.cardToEdit._id : -1}
           show={this.state.showEditCardModal}
           onClose={this.onCloseEditCardModal}
           onSave={this.onEditCard}

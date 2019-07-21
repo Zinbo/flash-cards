@@ -15,6 +15,7 @@ interface MyProps {
 }
 
 interface MyState {
+  categoryId: Number
   loading: boolean
   cards: JSX.Element[]
   categoryName: string
@@ -26,6 +27,7 @@ interface MyState {
 
 class CardStage extends React.Component<MyProps, MyState> {
   public state: MyState = {
+    categoryId: -1,
     loading: true,
     cards: [],
     categoryName: '',
@@ -44,6 +46,30 @@ class CardStage extends React.Component<MyProps, MyState> {
     this.handleIDontKnowButton = this.handleIDontKnowButton.bind(this)
     this.handleIKnowButton = this.handleIKnowButton.bind(this)
     this.flipCardToFront = this.flipCardToFront.bind(this)
+  }
+
+  public async componentDidMount() {
+    const params = queryString.parse(this.props.location.search)
+    let categoryId: number = NaN
+    if (typeof params.categoryId === 'string') {
+      categoryId = Number(params.categoryId)
+    }
+    if (isNaN(categoryId)) {
+      return
+    } // TODO: Need to handle this
+    const categoryNamePromise = this.getCategoryName(categoryId)
+    const cardDataPromise = this.getCardData(categoryId)
+    const categoryName = await categoryNamePromise;
+    const cardData = await cardDataPromise;
+    const cards = this.getCardsFromData(cardData)
+    this.setState({
+      categoryId,
+      loading: false,
+      cards,
+      currentCardIndex: 0,
+      categoryName,
+      cardData,
+    })
   }
 
   public toggleMenu(newState?: boolean) {
@@ -72,7 +98,7 @@ class CardStage extends React.Component<MyProps, MyState> {
   public getCardsFromData(cardData: FlashCard[]): JSX.Element[] {
     return cardData.map((cardDatum, index) => (
       <Card
-        id={cardDatum.id}
+        id={cardDatum._id}
         front={cardDatum.front}
         back={cardDatum.back}
         cardNumber={index + 1}
@@ -86,13 +112,13 @@ class CardStage extends React.Component<MyProps, MyState> {
   }
 
   public handleIKnowButton(id: number) : void {
-    fetch(`/api/cards/${id}/rightAnswer`, {method: 'POST'});
+    fetch(`/api/categories/${this.state.categoryId}/cards/${id}/rightAnswer`, {method: 'POST'});
     toastr.success('Good job!')
     this.changeCard(this.state.currentCardIndex + 1)
   }
 
   public handleIDontKnowButton(id: number) {
-    fetch(`/api/cards/${id}/wrongAnswer`, {method: 'POST'});
+    fetch(`/api/categories/${this.state.categoryId}/cards/${id}/wrongAnswer`, {method: 'POST'});
     toastr.warning('Better luck next time!')
     this.changeCard(this.state.currentCardIndex + 1)
   }
@@ -107,29 +133,6 @@ class CardStage extends React.Component<MyProps, MyState> {
   public changeCard(index: number) {
     this.setState({
       currentCardIndex: index,
-    })
-  }
-
-  public async componentDidMount() {
-    const params = queryString.parse(this.props.location.search)
-    let categoryId: number = NaN
-    if (typeof params.categoryId === 'string') {
-      categoryId = Number(params.categoryId)
-    }
-    if (isNaN(categoryId)) {
-      return
-    } // TODO: Need to handle this
-    const categoryNamePromise = this.getCategoryName(categoryId)
-    const cardDataPromise = this.getCardData(categoryId)
-    const categoryName = await categoryNamePromise;
-    const cardData = await cardDataPromise;
-    const cards = this.getCardsFromData(cardData)
-    this.setState({
-      loading: false,
-      cards,
-      currentCardIndex: 0,
-      categoryName,
-      cardData,
     })
   }
 
@@ -174,7 +177,7 @@ class CardStage extends React.Component<MyProps, MyState> {
               {/* <Col>{this.state.cards[this.state.currentCardIndex]}</Col> */}
               <Col>
                 <Card
-                  id={this.state.cardData[this.state.currentCardIndex].id}
+                  id={this.state.cardData[this.state.currentCardIndex]._id}
                   front={this.state.cardData[this.state.currentCardIndex].front}
                   back={this.state.cardData[this.state.currentCardIndex].back}
                   cardNumber={this.state.currentCardIndex + 1}
