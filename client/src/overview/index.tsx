@@ -2,7 +2,7 @@ import { faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
-import { FormControl, InputGroup, Button, Spinner, ButtonToolbar } from 'react-bootstrap'
+import { Button, FormControl, InputGroup, Spinner } from 'react-bootstrap'
 import { Col, ListGroup, Row } from 'react-bootstrap'
 import { RouteComponentProps } from 'react-router-dom'
 import toastr from 'toastr'
@@ -31,7 +31,7 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
     categoryToDelete: undefined,
     newCategoryName: '',
     response: '',
-    addingCategory: false
+    addingCategory: false,
   }
 
   constructor(props: RouteComponentProps) {
@@ -42,7 +42,7 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
   }
 
   public async componentDidMount() {
-    const categories = await this.getCategories() 
+    const categories = await this.getCategories()
     this.setState({
       categories,
     })
@@ -78,11 +78,11 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
   }
 
   public async getCategories() {
-    const response = await fetch('/api/categories');
-    const body = await response.json();
+    const response = await fetch('/api/categories')
+    const body = await response.json()
     // TODO: how to handle this error?
-    if(response.status !== 200) throw Error(body.message);
-    return body;
+    if (response.status !== 200) { throw Error(body.message) }
+    return body
   }
 
   public closeModal() {
@@ -97,22 +97,22 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
     }
     const categories = [...this.state.categories]
     this.setState({
-      addingCategory: true
+      addingCategory: true,
     })
     const response = await fetch('/api/categories', {
       method: 'POST',
-      body: JSON.stringify({name: this.state.newCategoryName}),
+      body: JSON.stringify({ name: this.state.newCategoryName }),
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
     })
-    const newCategory: Category = await response.json();
+    const newCategory: Category = await response.json()
     categories.push(newCategory)
     this.setState({
       newCategoryName: '',
       categories,
-      addingCategory: false
+      addingCategory: false,
     })
   }
 
@@ -147,19 +147,16 @@ class Categories extends React.Component<RouteComponentProps, MyState> {
             </InputGroup>
           </Col>
           <Col lg="1">
-            {this.state.addingCategory ? 
-              (<Button variant="primary" disabled>
-              <Spinner
-                as="span"
-                animation="border"
-                size="sm"
-                role="status"
-                aria-hidden="true"
-              />
-              <span className="sr-only">Loading...</span>
-            </Button>) :
-            <Button variant="primary" onClick={this.addCategory}>Submit</Button>
-            }
+            {this.state.addingCategory ? (
+              <Button variant="primary" disabled={true}>
+                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                <span className="sr-only">Loading...</span>
+              </Button>
+            ) : (
+              <Button variant="primary" onClick={this.addCategory}>
+                Submit
+              </Button>
+            )}
           </Col>
         </Row>
         <Row

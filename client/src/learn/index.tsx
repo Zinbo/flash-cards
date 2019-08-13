@@ -5,7 +5,7 @@ import Loading from '../common/loading'
 import './learn.css'
 
 interface Category {
-  id: number
+  _id: number
   name: string
   colour: string
 }
@@ -27,16 +27,16 @@ class ShowCategories extends React.Component<RouteComponentProps, LearnState> {
     return buttonColours[Math.floor(Math.random() * buttonColours.length)]
   }
 
-  public async componentDidMount() : Promise<void> {
-    const response = await fetch('/api/categories');
-    const categories : Category[] = await response.json();
+  public async componentDidMount(): Promise<void> {
+    const response = await fetch('/api/categories')
+    const categories: Category[] = await response.json()
     categories.forEach((category: Category) => {
-      category.colour = this.getRandomButtonColour() 
-    });
+      category.colour = this.getRandomButtonColour()
+    })
     this.setState({
-        loading: false,
-        categories,
-      })
+      loading: false,
+      categories,
+    })
   }
 
   public render() {
@@ -54,7 +54,7 @@ class ShowCategories extends React.Component<RouteComponentProps, LearnState> {
                   <button
                     className={`btn btn-${category.colour} btn-lg`}
                     style={{ marginRight: '10px' }}
-                    onClick={() => this.props.history.push(`/cardstage?categoryId=${category.id}`)}
+                    onClick={() => this.props.history.push(`/cardstage?categoryId=${category._id}`)}
                   >
                     {category.name}
                   </button>

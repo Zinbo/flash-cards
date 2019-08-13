@@ -70,7 +70,7 @@ export default class CardModal extends React.Component<CardModalProps, CardModal
       })
     } else {
       await this.props.onSave({
-        _id: -1,
+        _id: '',
         front: this.state.cardTitle,
         back: this.state.cardBack,
         noRight: 0,

@@ -6,13 +6,13 @@ import * as Showdown from 'showdown'
 import './learn.css'
 
 interface CardProps {
-  id: number
+  id: string
   front: string
   back: string
   cardNumber: number
   totalNumberOfCards: number
-  handleKnowButtonClick: (id: number) => void
-  handleWrongButtonClick: (id: number) => void
+  handleKnowButtonClick: (id: string) => void
+  handleWrongButtonClick: (id: string) => void
   flipCardToFront: (faceFront: boolean) => void
   faceFront: boolean
 }

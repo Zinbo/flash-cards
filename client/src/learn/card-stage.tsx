@@ -15,7 +15,7 @@ interface MyProps {
 }
 
 interface MyState {
-  categoryId: Number
+  categoryId: string
   loading: boolean
   cards: JSX.Element[]
   categoryName: string
@@ -27,7 +27,7 @@ interface MyState {
 
 class CardStage extends React.Component<MyProps, MyState> {
   public state: MyState = {
-    categoryId: -1,
+    categoryId: '',
     loading: true,
     cards: [],
     categoryName: '',
@@ -50,17 +50,14 @@ class CardStage extends React.Component<MyProps, MyState> {
 
   public async componentDidMount() {
     const params = queryString.parse(this.props.location.search)
-    let categoryId: number = NaN
-    if (typeof params.categoryId === 'string') {
-      categoryId = Number(params.categoryId)
-    }
-    if (isNaN(categoryId)) {
+    if (typeof params.categoryId !== 'string') {
       return
-    } // TODO: Need to handle this
+    }
+    const categoryId = params.categoryId
     const categoryNamePromise = this.getCategoryName(categoryId)
     const cardDataPromise = this.getCardData(categoryId)
-    const categoryName = await categoryNamePromise;
-    const cardData = await cardDataPromise;
+    const categoryName = await categoryNamePromise
+    const cardData = await cardDataPromise
     const cards = this.getCardsFromData(cardData)
     this.setState({
       categoryId,
@@ -84,9 +81,9 @@ class CardStage extends React.Component<MyProps, MyState> {
     e.stopPropagation()
   }
 
-  public async getCardData(categoryId: number): Promise<FlashCard[]> {
-    const response = await fetch(`/api/categories/${categoryId}/cards`);
-    return await response.json(); 
+  public async getCardData(categoryId: string): Promise<FlashCard[]> {
+    const response = await fetch(`/api/categories/${categoryId}/cards`)
+    return await response.json()
   }
 
   public flipCardToFront(faceFront: boolean) {
@@ -111,23 +108,23 @@ class CardStage extends React.Component<MyProps, MyState> {
     ))
   }
 
-  public handleIKnowButton(id: number) : void {
-    fetch(`/api/categories/${this.state.categoryId}/cards/${id}/rightAnswer`, {method: 'POST'});
+  public handleIKnowButton(id: string): void {
+    fetch(`/api/categories/${this.state.categoryId}/cards/${id}/rightAnswer`, { method: 'POST' })
     toastr.success('Good job!')
     this.changeCard(this.state.currentCardIndex + 1)
   }
 
-  public handleIDontKnowButton(id: number) {
-    fetch(`/api/categories/${this.state.categoryId}/cards/${id}/wrongAnswer`, {method: 'POST'});
+  public handleIDontKnowButton(id: string) {
+    fetch(`/api/categories/${this.state.categoryId}/cards/${id}/wrongAnswer`, { method: 'POST' })
     toastr.warning('Better luck next time!')
     this.changeCard(this.state.currentCardIndex + 1)
   }
 
-  public async getCategoryName(categoryId: number) : Promise<string> {
+  public async getCategoryName(categoryId: string): Promise<string> {
     const response = await fetch(`/api/categories/${categoryId}`)
-    const category = await response.json();
-    const name = category.name;
-    return name;
+    const category = await response.json()
+    const name = category.name
+    return name
   }
 
   public changeCard(index: number) {
