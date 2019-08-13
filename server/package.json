@@ -4,7 +4,7 @@
   "scripts": {
     "start-dev": "nodemon src/server.ts",
     "build": "tsc",
-    "start-prod": "node ./build/src/server.js",
+    "start-prod": "NODE_ENV=production node ./build/server.js",
     "start-debug": "nodemon --inspect src/server.ts",
     "nodemon-v": "nodemon -v"
   },
