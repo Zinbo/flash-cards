@@ -12,9 +12,9 @@ class CategoriesRepository {
     const mongodbPassword = process.env.mongodbpassword
     const mongoDb = process.env.mongodb
     //TODO: Pull this out so I can use a different db in prod
-    mongoose.connect(
-      `mongodb+srv://Zinbo:${mongodbPassword}@zinbo-w18br.mongodb.net/${mongoDb}?retryWrites=true&w=majority`
-    )
+    const connectionString = `mongodb+srv://Zinbo:${mongodbPassword}@zinbo-w18br.mongodb.net/${mongoDb}?retryWrites=true&w=majority`
+    console.log(`Connecting with string: ${connectionString}`)
+    mongoose.connect(connectionString)
   }
 
   async softDeleteCategoryById(categoryId: string): Promise<void> {
