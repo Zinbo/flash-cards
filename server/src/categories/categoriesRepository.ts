@@ -13,7 +13,6 @@ class CategoriesRepository {
     const mongoDb = process.env.mongodb
     //TODO: Pull this out so I can use a different db in prod
     const connectionString = `mongodb+srv://Zinbo:${mongodbPassword}@zinbo-w18br.mongodb.net/${mongoDb}?retryWrites=true&w=majority`
-    console.log(`Connecting with string: ${connectionString}`)
     mongoose.connect(connectionString)
   }
 
